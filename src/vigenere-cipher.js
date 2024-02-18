@@ -24,46 +24,38 @@ class VigenereCipheringMachine {
     this.isDirect = isDirect;
   }
 
-  encrypt(message, key) {
-    this.validateInput(message, key);
-
-    const encryptedMessage = this.processMessage(message, key, true);
-    return this.isDirect ? encryptedMessage.join('') : encryptedMessage.reverse().join('');
+  encrypt(str, key) {
+    return this.code(str, key, "encrypt");
   }
 
-  decrypt(encryptedMessage, key) {
-    this.validateInput(encryptedMessage, key);
-
-    const decryptedMessage = this.processMessage(encryptedMessage, key, false);
-    return this.isDirect ? decryptedMessage.join('') : decryptedMessage.reverse().join('');
+  decrypt(str, key) {
+    return this.code(str, key, "decrypt");
   }
 
-  validateInput(message, key) {
-    if (typeof message !== 'string' || typeof key !== 'string') {
-      throw new Error('Both message and key must be strings');
-    }
-  }
-
-  processMessage(message, key, isEncrypt) {
-    const result = [];
-    const keyRepeating = key.repeat(Math.ceil(message.length / key.length)).toUpperCase();
-
-    for (let i = 0, j = 0; i < message.length; i++) {
-      if (/[A-Z]/.test(message[i])) {
-        const messageCharCode = message[i].toUpperCase().charCodeAt(0);
-        const keyCharCode = keyRepeating[j].charCodeAt(0);
-        const shift = isEncrypt ? keyCharCode - 65 : 65 - keyCharCode;
-
-        const encryptedCharCode = ((messageCharCode + shift) % 26) + 65;
-        result.push(String.fromCharCode(encryptedCharCode));
-
-        j++;
+  code(str, key, type) {
+    if (!str || !key || !type) throw Error("Incorrect arguments!");
+    str = str.toUpperCase();
+    key = key.toUpperCase();
+    const arr = [];
+    for (let i = 0, j = 0; i < str.length; i++) {
+      if (str[i].match(/[A-Z]/)) {
+        if (type === "decrypt") {
+          arr.push(String.
+            fromCharCode((str[i].charCodeAt(0) - "A".charCodeAt(0) +
+             (26 - (key[j % key.length].charCodeAt(0) - "A".charCodeAt(0)))) %
+             26 + "A".charCodeAt(0)));
+        } else {
+          arr.push(String.
+            fromCharCode((str[i].charCodeAt(0) - "A".charCodeAt(0) +
+           (key[j % key.length].charCodeAt(0) - "A".charCodeAt(0))) %
+           26 + "A".charCodeAt(0)));
+        }
+        j++
       } else {
-        result.push(message[i]);
+        arr.push(str[i]);
       }
     }
-
-    return result;
+    return this.isDirect ? arr.join("") : arr.reverse().join("");
   }
 }
 

@@ -1,5 +1,3 @@
-const { NotImplementedError } = require('../extensions/index.js');
-
 /**
  * Create a repeating string based on the given parameters
  *  
@@ -26,7 +24,7 @@ function repeater(str, options) {
 
 
   const repeatedString = Array(repeatTimes)
-    .fill(`${str}${Array(additionRepeatTimes).fill(addition).join(additionSeparator)}`)
+    .fill(`${str}${Array(additionRepeatTimes).fill(String(addition)).join(additionSeparator)}`)
     .join(separator);
 
   return repeatedString;
